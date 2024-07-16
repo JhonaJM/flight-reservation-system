@@ -70,7 +70,7 @@ Almacena detalles específicos de los boletos asociados a una reserva, como el n
 1.  Clonar el repositorio
 2.  Crear un `.env` basado en el `.env.template` por cada microservicio
 3. Instalar las dependencias por cada microservicio `npm install`
-4. Ejecutar el comando  `docker compose up --build` en la raiz del proyecto.
+4. Ejecutar el comando  `docker compose up --build` en la raiz del proyecto para que todos los microservicios y bases de datos inicienn.
 ![Contener con el proyecto en ejecución](https://i.ibb.co/9Vgz13R/Whats-App-Image-2024-07-16-at-02-50-50.jpg)
 
 5. Ejecutar el comando  `hookdeck  listen  3003  stripe-to-localhost` para poder escuchar el `charge.succeeded ` del pago y actualizar el estado de la reserva.
