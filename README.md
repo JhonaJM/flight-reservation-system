@@ -73,6 +73,7 @@ Almacena detalles específicos de los boletos asociados a una reserva, como el n
 4. Ejecutar el comando  `docker compose up --build` en la raiz del proyecto.
 ![Contener con el proyecto en ejecución](https://i.ibb.co/9Vgz13R/Whats-App-Image-2024-07-16-at-02-50-50.jpg)
 
+5. Ejecutar el comando  `hookdeck  listen  3003  stripe-to-localhost` para poder escuchar el `charge.succeeded ` del pago y actualizar el estado de la reserva.
 # Resultados
 
 > uso de postam
@@ -84,3 +85,6 @@ Almacena detalles específicos de los boletos asociados a una reserva, como el n
 ![enter image description here](https://i.ibb.co/xsYyvnm/fin-flights.png)
 ### Reserva un vuelo
 ![enter image description here](https://i.ibb.co/Rh38Wk0/RESERVATION.png)
+### Pago y emision de una reserva
+![enter image description here](https://i.ibb.co/JxfTGSj/pay-reservation.png)
+![enter image description here](https://i.ibb.co/xC6kpsb/pay-sucess.png)
