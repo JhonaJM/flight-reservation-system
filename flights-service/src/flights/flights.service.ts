@@ -2,6 +2,7 @@ import { HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import { RpcException } from '@nestjs/microservices';
 import { CreateFlightDto, PaginationFiltersDto, UpdateFlightDto } from './dto';
+import { UpdateSeatsDto } from './dto/updateSeats.dto';
 
 @Injectable()
 export class FlightsService extends PrismaClient implements OnModuleInit {
@@ -13,7 +14,6 @@ export class FlightsService extends PrismaClient implements OnModuleInit {
 
   }
   create(createFlightDto: CreateFlightDto) {
-
     return this.flight.create({
       data: createFlightDto
     });
@@ -52,18 +52,6 @@ export class FlightsService extends PrismaClient implements OnModuleInit {
               lte: PaginationFiltersDto.endDate
             }
           },
-          select: {
-            id: true,
-            airlineCode: true,
-            departureCity: true,
-            arrivalCity: true,
-            flightNumber: true,
-            departureHour: true,
-            arrivalHour: true,
-            dateFlight: true,
-            availableSeats: true,
-            price: true
-          }
         }), meta: {
           total,
           page,
@@ -81,18 +69,6 @@ export class FlightsService extends PrismaClient implements OnModuleInit {
   async findOne(id: number) {
     try {
       const flight = await this.flight.findFirst({
-        select: {
-          id: true,
-          airlineCode: true,
-          departureCity: true,
-          arrivalCity: true,
-          flightNumber: true,
-          departureHour: true,
-          arrivalHour: true,
-          dateFlight: true,
-          availableSeats: true,
-          price: true
-        },
         where: {
           id,
           status: 1,
@@ -114,24 +90,9 @@ export class FlightsService extends PrismaClient implements OnModuleInit {
   }
 
   async update(id: number, updateFlightDto: UpdateFlightDto) {
-
     await this.findOne(id);
-
     const { id: ___, ...data } = updateFlightDto;
-
     return this.flight.update({
-      select: {
-        id: true,
-        airlineCode: true,
-        departureCity: true,
-        arrivalCity: true,
-        flightNumber: true,
-        departureHour: true,
-        arrivalHour: true,
-        dateFlight: true,
-        availableSeats: true,
-        price: true
-      },
       where: { id },
       data,
     });
@@ -140,18 +101,6 @@ export class FlightsService extends PrismaClient implements OnModuleInit {
   async remove(id: number) {
     await this.findOne(id);
     return this.flight.update({
-      select: {
-        id: true,
-        airlineCode: true,
-        departureCity: true,
-        arrivalCity: true,
-        flightNumber: true,
-        departureHour: true,
-        arrivalHour: true,
-        dateFlight: true,
-        availableSeats: true,
-        price: true
-      },
       where: { id },
       data: { status: 2 },
     });
@@ -164,6 +113,9 @@ export class FlightsService extends PrismaClient implements OnModuleInit {
       where: {
         id: {
           in: ids
+        },
+        availableSeats:{
+          gt:0
         }
       }
     });
@@ -177,4 +129,23 @@ export class FlightsService extends PrismaClient implements OnModuleInit {
 
     return flights;
   }
+
+  async updateFlightSeats(data: UpdateSeatsDto) {
+
+    const flights = await this.flight.updateMany({
+      where: {
+        id: {
+          in: data.ids
+        }
+      },
+      data: {
+        availableSeats: {
+          decrement: data.seats
+        }
+      },
+    });
+
+    return flights;
+  }
+
 }

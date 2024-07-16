@@ -11,12 +11,9 @@ export class PaymetsService {
     private readonly stripe = new Stripe(envs.stripeSecret);
     constructor(
         @Inject(NATS_SERVICE) private readonly client: ClientProxy,
-      ) {
-      
-      }
+      ) {}
       
     async createPaymentSession(paymentSessionDto: PaymentSessionDto) {
-
         const { currency, pax, items, reservationId } = paymentSessionDto;
         const lineItems = items.map(item => {
             return {
@@ -31,8 +28,7 @@ export class PaymetsService {
             }
         });
 
-        const session = await this.stripe.checkout.sessions.create({
-            //put reservation pnr/id
+        const session = await this.stripe.checkout.sessions.create({            
             payment_intent_data: {
                 metadata: {
                     reservationId: reservationId

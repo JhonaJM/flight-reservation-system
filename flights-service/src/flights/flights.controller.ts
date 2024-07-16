@@ -1,7 +1,8 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, Query, ParseIntPipe } from '@nestjs/common';
 import { FlightsService } from './flights.service';
-import { MessagePattern, Payload } from '@nestjs/microservices';
+import { MessagePattern, Payload,EventPattern } from '@nestjs/microservices';
 import { CreateFlightDto, PaginationFiltersDto, UpdateFlightDto } from './dto';
+import { UpdateSeatsDto } from './dto/updateSeats.dto';
 
 @Controller('flights')
 export class FlightsController {
@@ -14,7 +15,6 @@ export class FlightsController {
 
   @MessagePattern('findManyFlights')
   findAll(@Payload() PaginationFiltersDto: PaginationFiltersDto) {
-
     return this.flightsService.findAll(PaginationFiltersDto);
   }
 
@@ -23,6 +23,7 @@ export class FlightsController {
     return this.flightsService.findOne(id);
   }
 
+ 
   @MessagePattern('updateFlight')
   update(@Payload() updateFlightDto: UpdateFlightDto) {
     return this.flightsService.update(updateFlightDto.id, updateFlightDto);
@@ -33,9 +34,19 @@ export class FlightsController {
     return this.flightsService.remove(+id);
   }
 
+
   @MessagePattern('validateFlights')
   validateFlights(@Payload() ids: number[]) {
     return this.flightsService.validateFlights(ids);
+  }
+  
+  @MessagePattern('update.flight.seats')
+  @EventPattern('update.flight.seats')
+  updateFlightSeats(@Payload() data: UpdateSeatsDto) {
+    
+    console.log("llego");
+    console.log({data});
+    return this.flightsService.updateFlightSeats(data);
   }
 
 

@@ -31,7 +31,7 @@ export class ReservationsController {
   @MessagePattern('payment.succeeded')
   @EventPattern('payment.succeeded')
   IssuerReservation(@Payload() issuedReservation : IssuedReservationDto) {
-  
+    return this.reservationsService.IssueReservation(issuedReservation);
     console.log({issuedReservation});
     return;
     

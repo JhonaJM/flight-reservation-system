@@ -24,18 +24,31 @@ export class ReservationsService extends PrismaClient implements OnModuleInit {
     this.logger.log("Database connectec");
   }
 
+  async validateFlights(flightIds: number[]) {
+    try {
+      return await firstValueFrom(
+        this.client.send('validateFlights', flightIds)
+      );
+    } catch (error) {
+      throw new RpcException({
+        status: HttpStatus.BAD_REQUEST,
+        message: error.message
+      });
+    }
+  }
 
+  async updateFlightSeats(flightIds: number[]) {
+    this.client.emit('updateFlightSeats', flightIds);
+  }
   async create(createReservationDto: CreateReservationDto) {
     try {
       const flightIds = createReservationDto.segments.map(segment => segment.flightId);
-
-      const flights: any[] = await firstValueFrom(
-        this.client.send('validateFlights', flightIds)
-      );
+      const flights = await this.validateFlights(flightIds);
 
       const totalFlights = createReservationDto.segments.reduce((acc, segment) => {
         return flights.find((flight) => flight.id === segment.flightId).price;
       }, 0);
+
       const totalReservation = totalFlights * createReservationDto.passengers.length;
       const currency = createReservationDto.segments[0].currency;
 
