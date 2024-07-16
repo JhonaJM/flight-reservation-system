@@ -1,0 +1,15 @@
+version : '3'
+
+services:
+  flights-db:
+    container_name: flights_database
+    image: postgres:16.2
+    restart: always
+    volumes:
+      - ./postgres:/var/lib/postgresql/data
+    ports: 
+      - 5434:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=flightdb

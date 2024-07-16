@@ -1,0 +1,96 @@
+version : '3'
+
+services:
+  nats.server:
+    image: nats:latest
+    ports:
+      - 8222:8222
+# ============================
+# Gateway
+# ============================
+  client-gateway:
+    build: ./client-gateway
+    ports:
+      - ${CLIENT_GATEWAY}:${CLIENT_GATEWAY}
+    volumes:
+      - ./client-gateway/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${CLIENT_GATEWAY}
+      - NATS_SERVERS=nats://nats.server:4222
+# ============================
+# Flights-service
+# ============================
+
+  flights-service:
+    depends_on:
+      - flights-db
+    build: ./flights-service
+    volumes:
+      - ./flights-service/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3001
+      - DATABASE_URL=postgresql://postgres:123456@flights-db:5432/flightdb?schema=public
+      - NATS_SERVERS=nats://nats.server:4222
+      
+  flights-db:
+    container_name: flights_database
+    image: postgres:16.2
+    restart: always
+    volumes:
+      - ./flights-service/postgres:/var/lib/postgresql/data
+    ports: 
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=flightdb
+
+# ============================
+# reservation-service
+# ============================
+
+  reservations-service:
+    depends_on:
+      - reservations-db
+    build: ./reservations-service
+    volumes:
+      - ./reservations-service/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=3002
+      - DATABASE_URL=postgresql://postgres:123456@reservations-db:5432/reservationdb?schema=public
+      - NATS_SERVERS=nats://nats.server:4222
+  
+  reservations-db:
+    container_name: reservations_database
+    image: postgres:16.2
+    restart: always
+    volumes:
+      - ./reservations-service/postgres:/var/lib/postgresql/data
+    ports: 
+      - 5433:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=reservationdb
+
+# ============================
+# payment-service
+# ============================
+
+  payments-service:
+    build: ./payments-service
+    ports:
+      - ${PAYMENTE_MICROSERVICE_PORT}:${PAYMENTE_MICROSERVICE_PORT}
+    volumes:
+      - ./payments-service/src:/usr/src/app/src
+    command: npm run start:dev
+    environment:
+      - PORT=${PAYMENTE_MICROSERVICE_PORT}
+      - NATS_SERVERS=nats://nats.server:4222
+      - STRIPE_SECRET=${STRIPE_SECRET}
+      - STRIPE_SUCCESS_URL=${STRIPE_SUCCESS_URL}
+      - STRIPE_CANCEL_URL=${STRIPE_CANCEL_URL}
+      - STRIPE_ENDPOINT_SECRET=${STRIPE_ENDPOINT_SECRET}

@@ -1,0 +1,3 @@
+export const FLIGHT_SERVICE = 'FLIGHT_SERVICE';
+
+export const NATS_SERVICE = 'NATS_SERVICE';
