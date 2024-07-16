@@ -1,0 +1,87 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ReservationStatus {
+  PENDING
+  ISSUED
+  VOIDED
+}
+
+model Reservation {
+  id             String            @id @default(uuid())
+  pnrLocator     String
+  status         ReservationStatus
+  currency       String
+  ammount        Float
+  stripeChargeId String?
+  receiptUrl     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Segments          Segments[]
+  Passengers        Passengers[]
+  TicketInformation TicketInformation[]
+}
+
+model Segments {
+  id            String       @id @default(uuid())
+  flightId      Int
+  airlineCode   String
+  departureCity String
+  arrivalCity   String
+  currency      String
+  price         Float
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+  Reservation   Reservation? @relation(fields: [reservationId], references: [id])
+  reservationId String?
+}
+
+enum TypeIdentification {
+  PASSAPORTE
+  CARNET_EXTRANJERIA
+  DNI
+}
+
+model Passengers {
+  id             String             @id @default(uuid())
+  giveName       String
+  surName        String
+  identification TypeIdentification
+  documentNumber String
+  typeCode       String
+  Reservation    Reservation?       @relation(fields: [reservationId], references: [id])
+  reservationId  String?
+}
+
+model TicketInformation {
+  id            String       @id @default(uuid())
+  number        String
+  Reservation   Reservation? @relation(fields: [reservationId], references: [id])
+  reservationId String?
+}
+
+// enum TypePayment {
+//   CASH
+//   TC
+// }
+
+// model paymentInformation {
+//   id String @id @default(uuid())
+//   type TypePayment @default(CASH)
+//   amount Float
+//   currency String
+// }

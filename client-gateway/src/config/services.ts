@@ -1,0 +1,4 @@
+// export const FLIGHT_SERVICE = 'FLIGHT_SERVICE';
+// export const RESERVATION_SERVICE = 'RESERVATION_SERVICE';
+
+export const NATS_SERVICE = 'NATS_SERVICE';
