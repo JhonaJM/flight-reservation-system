@@ -69,6 +69,7 @@ export class PaymetsService {
 
         switch (event.type) {
             case 'charge.succeeded':
+                console.log("llego aqui");
                 const chargeSucceeded = event.data.object;
                 const payload = {
                     stripePaymentId : chargeSucceeded.id,
@@ -82,7 +83,7 @@ export class PaymetsService {
             default:
                 console.log('event not handle');
         }
-
+        
 
         return res.status(200).json({ sig });
 
