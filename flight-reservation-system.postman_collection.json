@@ -1,0 +1,325 @@
+{
+	"info": {
+		"_postman_id": "24501ed0-6879-4696-a14b-27307c3645e6",
+		"name": "flight-reservation-system",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14219764"
+	},
+	"item": [
+		{
+			"name": "flights",
+			"item": [
+				{
+					"name": "Save Flight",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"airlineCode\": \"AA\",\r\n  \"departureCity\": \"LIM\",\r\n  \"arrivalCity\": \"CIX\",\r\n  \"flightNumber\": \"AA123\",\r\n  \"departureHour\": \"08:00\",\r\n  \"arrivalHour\": \"10:30\",\r\n  \"dateFlight\": \"2024-07-15T00:00:00Z\",\r\n  \"availableSeats\": 150,\r\n  \"price\": 250.50\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/flights",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"flights"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Flights",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/flights?page=1&limit=10&startDate=2024-07-15&endDate=2025-07-16",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"flights"
+							],
+							"query": [
+								{
+									"key": "page",
+									"value": "1"
+								},
+								{
+									"key": "limit",
+									"value": "10"
+								},
+								{
+									"key": "startDate",
+									"value": "2024-07-15"
+								},
+								{
+									"key": "endDate",
+									"value": "2025-07-16"
+								},
+								{
+									"key": "departureCity",
+									"value": "CIX",
+									"disabled": true
+								},
+								{
+									"key": "arrivalCity",
+									"value": "CIX",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Flight By Id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/flights/21",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"flights",
+								"21"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Flight",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/flights/41",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"flights",
+								"41"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Flight",
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"price\": 250\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/flights/39",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"flights",
+								"39"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "reservations",
+			"item": [
+				{
+					"name": "Save Reservation",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \r\n  \"segments\":[\r\n    {\r\n        \"flightId\":21,\r\n        \"airlineCode\":\"AA\",\r\n        \"departureCity\":\"PIU\",\r\n        \"arrivalCity\" : \"LIM\",\r\n        \"currency\" : \"USD\",\r\n        \"price\" : 120.01\r\n    }\r\n    ],\r\n  \"passengers\":[\r\n    {\r\n        \"giveName\":\"jhonatan\",\r\n        \"surName\":\"jimenez\",\r\n        \"identification\" : \"DNI\",\r\n        \"documentNumber\":\"74218013\",\r\n        \"typeCode\" : \"ADT\"\r\n    },\r\n     {\r\n        \"giveName\":\"denzel\",\r\n        \"surName\":\"godoy\",\r\n        \"identification\" : \"DNI\",\r\n        \"documentNumber\":\"77777777\",\r\n        \"typeCode\" : \"CNN\"\r\n    }\r\n    ]  \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3000/api/reservations",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"reservations"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Find Reservation By RecLoc",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/reservations/89273F",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"reservations",
+								"89273F"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "payments",
+			"item": [
+				{
+					"name": "create-payment-session",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"reservationId\": \"123\",\r\n    \"pnrLocator\" : \"qwe\",\r\n    \"currency\":\"USD\",\r\n    \"pax\" : 2,\r\n    \"items\":[\r\n        {\r\n            \"itinerary\" : \"LIM/CUZ\",\r\n            \"price\" : 120\r\n        },\r\n         {\r\n            \"itinerary\" : \"CUZ/LIM\",\r\n            \"price\" : 120\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:3003/payments/create-payment-session",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"payments",
+								"create-payment-session"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "sucess",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3003/payments/sucess",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"payments",
+								"sucess"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "cancel",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3003/payments/cancel",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"payments",
+								"cancel"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "webhook",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3003/payments/webhook",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3003",
+							"path": [
+								"payments",
+								"webhook"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
