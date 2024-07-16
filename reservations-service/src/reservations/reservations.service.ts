@@ -94,25 +94,57 @@ export class ReservationsService extends PrismaClient implements OnModuleInit {
       });
 
       if (reservation) {
-        flights.map(async f => {
-          await firstValueFrom(
-            this.client.send('updateFlight', {
-              id: f.id,
-              availableSeats: f.availableSeats - reservation.Passengers.length
-            })
-          );
-        });
+        try {
+          await this.updateAvailableSeats(reservation, flights);
+        } catch (error) {
+          await this.compensateUpdateAvailableSeats(flights);
+          throw new Error(error);
+        }
       }
-
       return reservation;
 
     } catch (error) {
+      await this.compensateCreateReservation(createReservationDto.pnrLocator);
       throw new RpcException({
         status: HttpStatus.BAD_REQUEST,
         message: error.message
       });
     }
 
+  }
+
+  async compensateCreateReservation(pnrLocator: string) {
+    const reservation = await this.reservation.findFirst({
+      where: { pnrLocator }
+    });
+
+    if (reservation) {
+      await this.reservation.update({
+        where: { id: reservation.id },
+        data: { status: 'VOIDED' },
+      });
+    }
+  }
+
+  async compensateUpdateAvailableSeats(flights) {
+    flights.map(async f => {
+      await firstValueFrom(
+        this.client.send('updateFlight', {
+          id: f.id,
+          availableSeats: f.availableSeats
+        })
+      )
+    });
+  }
+  async updateAvailableSeats(reservation, flights) {
+    flights.map(async f => {
+      await firstValueFrom(
+        this.client.send('updateFlight', {
+          id: f.id,
+          availableSeats: f.availableSeats - reservation.Passengers.length
+        })
+      )
+    });
   }
 
   findAll() {
@@ -139,20 +171,6 @@ export class ReservationsService extends PrismaClient implements OnModuleInit {
   }
 
   async createPaymentSession(reservation: any) {
-
-    const demo = {
-      reservationId: reservation.id,
-      pnrLocator: reservation.pnrLocator,
-      currency: reservation.currency,
-      pax: reservation.Passengers.length,
-      items: reservation.Segments.map(s => {
-        return {
-          itinerary: `${s.departureCity}/${s.arrivalCity}`,
-          price: s.price
-        }
-      })
-    };
-    console.log(demo);
     const paymentSession = await firstValueFrom(
       this.client.send('create.payment.session', {
         reservationId: reservation.id,
@@ -166,9 +184,7 @@ export class ReservationsService extends PrismaClient implements OnModuleInit {
           }
         })
       })
-
     )
-
     return paymentSession;
   }
 
