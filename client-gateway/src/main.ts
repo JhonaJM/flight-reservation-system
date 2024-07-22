@@ -17,6 +17,7 @@ async function bootstrap() {
   );
 
   app.useGlobalFilters(new RpcCustomExceptionFilter());
+  app.enableCors();
   await app.listen(envs.port);
   
   logger.log(`Running in port ${envs.port}`);

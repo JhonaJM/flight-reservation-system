@@ -3,6 +3,7 @@ import { FlightsService } from './flights.service';
 import { MessagePattern, Payload,EventPattern } from '@nestjs/microservices';
 import { CreateFlightDto, PaginationFiltersDto, UpdateFlightDto } from './dto';
 import { UpdateSeatsDto } from './dto/updateSeats.dto';
+import { OriginDestinationDto } from './dto/origin-destination.dto';
 
 @Controller('flights')
 export class FlightsController {
@@ -14,8 +15,13 @@ export class FlightsController {
   }
 
   @MessagePattern('findManyFlights')
-  findAll(@Payload() PaginationFiltersDto: PaginationFiltersDto) {
-    return this.flightsService.findAll(PaginationFiltersDto);
+  findAll(@Payload() paginationFiltersDto: PaginationFiltersDto) {
+    return this.flightsService.findAll(paginationFiltersDto);
+  }
+
+  @MessagePattern('availability')
+  availability(@Payload() originDestinationDto: OriginDestinationDto) {
+    return this.flightsService.availability(originDestinationDto);
   }
 
   @MessagePattern('findOneFlight')
@@ -43,9 +49,6 @@ export class FlightsController {
   @MessagePattern('update.flight.seats')
   @EventPattern('update.flight.seats')
   updateFlightSeats(@Payload() data: UpdateSeatsDto) {
-    
-    console.log("llego");
-    console.log({data});
     return this.flightsService.updateFlightSeats(data);
   }
 

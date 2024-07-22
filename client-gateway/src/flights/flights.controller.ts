@@ -3,6 +3,7 @@ import { ClientProxy, RpcException } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { NATS_SERVICE } from 'src/config';
 import { CreateFlightDto, PaginationFiltersDto, UpdateFlightDto } from './dto';
+import { OriginDestinationDto } from './dto/origin-destination.dto';
 
 @Controller('flights')
 export class FlightsController {
@@ -35,6 +36,20 @@ export class FlightsController {
       throw new RpcException(error);
     }
   }
+
+  @Post('/availability')
+  async availability(@Body() originDestinationDto: OriginDestinationDto) {
+    try {
+      const flights = await firstValueFrom(
+        this.client.send('availability', originDestinationDto)
+      );
+
+      return flights;
+    } catch (error) {
+      throw new RpcException(error);
+    }
+  }
+
 
   @Get(':id')
   async findOneFlight(@Param('id') id: number) {

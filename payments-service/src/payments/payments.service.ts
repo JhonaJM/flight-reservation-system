@@ -36,11 +36,12 @@ export class PaymetsService {
             },
             line_items: lineItems,
             mode: 'payment',
-            success_url: envs.stripeSuccessUrl,
+            success_url:  `http://localhost:5173/CompleteReservation/${reservationId}`,
             cancel_url: envs.stripeCancelUrl
 
         });
 
+        console.log(session.success_url);
         return {
             cancelUrl : session.cancel_url,
             succcessUrl : session.success_url,

@@ -42,15 +42,15 @@ export class ReservationsService extends PrismaClient implements OnModuleInit {
   }
   async create(createReservationDto: CreateReservationDto) {
     try {
-      const flightIds = createReservationDto.segments.map(segment => segment.flightId);
+      const flightIds = createReservationDto.segments.map(segment => segment.id);
       const flights = await this.validateFlights(flightIds);
 
       const totalFlights = createReservationDto.segments.reduce((acc, segment) => {
-        return flights.find((flight) => flight.id === segment.flightId).price;
+        return flights.find((flight) => flight.id === segment.id).price;
       }, 0);
 
       const totalReservation = totalFlights * createReservationDto.passengers.length;
-      const currency = createReservationDto.segments[0].currency;
+      const currency = flights[0].currency;
 
       const reservation = await this.reservation.create({
         data: {
@@ -61,9 +61,9 @@ export class ReservationsService extends PrismaClient implements OnModuleInit {
           Segments: {
             createMany: {
               data: createReservationDto.segments.map((segment) => {
-                const flight = flights.find((f) => f.id === segment.flightId);
+                const flight = flights.find((f) => f.id === segment.id);
                 return {
-                  flightId: segment.flightId,
+                  flightId: segment.id,
                   airlineCode: flight.airlineCode,
                   departureCity: flight.departureCity,
                   arrivalCity: flight.arrivalCity,
@@ -165,6 +165,24 @@ export class ReservationsService extends PrismaClient implements OnModuleInit {
       throw new RpcException({
         status: HttpStatus.NOT_FOUND,
         message: `Not found record locator  ${pnrLocator}`
+      })
+
+    return reservation;
+  }
+  async findOneById(id: string) {
+    const reservation = await this.reservation.findFirst({
+      where: { id }
+      , include: {
+        Segments: true,
+        Passengers: true,
+        TicketInformation: true,
+      }
+    });
+
+    if (!reservation)
+      throw new RpcException({
+        status: HttpStatus.NOT_FOUND,
+        message: `Not found record locator  ${id}`
       })
 
     return reservation;

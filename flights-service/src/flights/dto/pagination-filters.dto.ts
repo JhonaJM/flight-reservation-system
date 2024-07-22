@@ -4,12 +4,12 @@ import { PaginationDto } from "src/common/dto";
 
 export class PaginationFiltersDto extends PaginationDto {
 
-    @Length(3, 3, { message: 'currency must be at 3 characters ' })
+    @Length(3, 3, { message: 'currency must be at 3 characters' })
     @IsOptional()
     @IsString()
     public departureCity: string;
 
-    @Length(3, 3, { message: 'currency must be at 3 characters ' })
+    @Length(3, 3, { message: 'currency must be at 3 characters' })
     @IsOptional()
     @IsString()
     public arrivalCity: string;

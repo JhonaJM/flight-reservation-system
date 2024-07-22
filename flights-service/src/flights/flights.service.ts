@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { RpcException } from '@nestjs/microservices';
 import { CreateFlightDto, PaginationFiltersDto, UpdateFlightDto } from './dto';
 import { UpdateSeatsDto } from './dto/updateSeats.dto';
+import { OriginDestinationDto } from './dto/origin-destination.dto';
 
 @Injectable()
 export class FlightsService extends PrismaClient implements OnModuleInit {
@@ -66,6 +67,42 @@ export class FlightsService extends PrismaClient implements OnModuleInit {
 
   }
 
+  async availability(originDestinationDto: OriginDestinationDto) {
+    try {
+      const flightsPromises = originDestinationDto.items.map(async i => {
+
+        const flight = await this.flight.findMany({
+          where: {
+            status: 1,
+            availableSeats: {
+              gte: originDestinationDto.pax
+            },
+            departureCity: i.departureCity,
+            arrivalCity: i.arrivalCity,
+            dateFlight: {
+              equals: i.departureDate.toISOString()
+            }
+          },
+        });
+
+        return {
+          [`${i.departureCity}-${i.arrivalCity}`]:flight
+        }
+      });
+      const flights = await Promise.all(flightsPromises);
+      console.log(flights);
+
+      return {
+        itineraries : flights,
+      };
+    } catch (error) {
+      this.logger.error(`Error fetching flights: ${error.message}`, error.stack);
+      throw error;
+    }
+
+  }
+
+
   async findOne(id: number) {
     try {
       const flight = await this.flight.findFirst({
@@ -85,7 +122,7 @@ export class FlightsService extends PrismaClient implements OnModuleInit {
 
     } catch (error) {
       this.logger.error(`Error fetching flights: ${error.message}`, error.stack);
-      throw error;
+      throw new RpcException(error.message)
     }
   }
 
@@ -114,8 +151,8 @@ export class FlightsService extends PrismaClient implements OnModuleInit {
         id: {
           in: ids
         },
-        availableSeats:{
-          gt:0
+        availableSeats: {
+          gt: 0
         }
       }
     });

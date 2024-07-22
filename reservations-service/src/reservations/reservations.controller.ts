@@ -22,10 +22,14 @@ export class ReservationsController {
     }            
   }
 
-  @MessagePattern('findReservationByPnr' )
-  findOneByPnr(@Payload() pnrLocator: string) {
+  // @MessagePattern('findReservationByPnr' )
+  // findOneByPnr(@Payload() pnrLocator: string) {
 
-    return this.reservationsService.findOneByPnr(pnrLocator);
+  //   return this.reservationsService.findOneByPnr(pnrLocator);
+  // }
+  @MessagePattern('findReservationByPnr' )
+  findOneById(@Payload() id: string) {
+    return this.reservationsService.findOneById(id);
   }
 
   @MessagePattern('payment.succeeded')

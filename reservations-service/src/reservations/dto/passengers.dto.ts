@@ -15,7 +15,7 @@ export class PassengerDto {
     identification: TypeIdentification;// = TypeIdentification.DNI;
 
     @IsString()
-    @Length(8, 12, { message: '' })
+    @Length(5, 10, { message: '' })
     documentNumber: string;
     
     @IsString()
